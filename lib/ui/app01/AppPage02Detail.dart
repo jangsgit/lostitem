@@ -26,37 +26,8 @@ class _AppPage02DeatilState extends State<AppPage02Deatil> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _formKey2 = GlobalKey<FormState>();
 
-  List<String> dropdownList = ['분실', '습득'];
-  String _selectedValue = "";
-  String ? _selectedValue2;
-  var _usernm = "";
-
-
   TimeOfDay selectedTime = TimeOfDay(hour: 00, minute: 00);
   DateTime _selectedDate = DateTime.now(), initialDate = DateTime.now();
-  late String now;
-  late String now2;
-  String _custcd = '';
-  String usernm = "";
-  String  _lsInputdate = "";
-  String _lsSubject  = "";
-  String _lsItemMemo = "";
-  String _lsFlag     = "";
-  String _lsPernm     = "";
-  String _lsLocation     = "";
-  bool _lsModify = false;
-  bool _lsUpdate = false;
-  bool _lsDelete = false;
-  String _lsSeq     = "";
-  int _llSeq     = 0;
-
-
-  TextEditingController _etItemmemo = TextEditingController();
-  TextEditingController _etSubject = TextEditingController();
-  TextEditingController _etInputdate = TextEditingController();
-  TextEditingController _etLocation = TextEditingController();
-  TextEditingController _etPernm = TextEditingController();
-
 
   @override
   void initState() {
@@ -71,158 +42,23 @@ class _AppPage02DeatilState extends State<AppPage02Deatil> {
   }
   Future<void> sessionData() async {
     String username = await SessionManager().get("username");
-    // 문자열 디코딩
-    setState(() {
-      _usernm = utf8.decode(username.runes.toList());
-    });
   }
 
+
+  //---------cording ---------
   void setData(){
-    // _selectedValue = "001";
-    // _selectedValue2 = "분실";
-    _llSeq= widget.itemData.seq;
-    _etItemmemo = TextEditingController(text:widget.itemData.itemmemo);
-    _etSubject = TextEditingController(text:widget.itemData.itemsubject);
-    _etInputdate = TextEditingController(text:widget.itemData.inputdate);
-    _etLocation = TextEditingController(text:widget.itemData.location);
-    _etPernm = TextEditingController(text:widget.itemData.pernm);
-    _selectedValue= widget.itemData.flag;
-    _selectedValue2= widget.itemData.flagnm;
 
-    print('_llSeq-->' + _llSeq.toString());
-    if(widget.itemData.pernm == _usernm){
-      _lsModify = true;
-    }
   }
 
+  //---------cording ---------
   Future update_data() async {
-    _custcd = await  SessionManager().get("custcd");
-    var uritxt = CLOUD_URL + '/daegun/itemupdate';
-    var encoded = Uri.encodeFull(uritxt);
-    Uri uri = Uri.parse(encoded);
-    if(!_lsModify) {
-      showAlertDialog(context, '등록자만 수정할 수 있습니다.');
-      return false;
-    }
-    if(_etInputdate.text == "") {
-      showAlertDialog(context, '작성일자를 입력하세요');
-      return false;
-    }
-    if(_etSubject.text.isEmpty || _etSubject.text == "") {
-      showAlertDialog(context, '제목을 입력하세요');
-      return false;
-    }
-    if(_etItemmemo.text.isEmpty || _etItemmemo.text == "" ) {
-      showAlertDialog(context, '내용을 입력하세요');
-      return false;
-    }
-    if(_etLocation.text.isEmpty || _etLocation.text == "" ) {
-      showAlertDialog(context, '위치를 입력하세요');
-      return false;
-    }
-    if(_selectedValue.isEmpty || _selectedValue == "" ) {
-      showAlertDialog(context, '분류를 선택하세요');
-      return false;
-    }
-    //print("_selectedValue2222--->" + _selectedValue);
-    _lsInputdate = _etInputdate.text;
-    _lsSubject = _etSubject.text;
-    _lsItemMemo = _etItemmemo.text;
-    _lsFlag = _selectedValue;
-    _lsLocation = _etLocation.text;
-    _lsPernm = _usernm ;
-    _lsSeq = _llSeq.toString();
-
-     print('_lsInputdate-->' + _lsInputdate);
-    print('_lsSubject-->' + _lsSubject);
-    print('_lsItemMemo-->' + _lsItemMemo);
-    print('_lsFlag-->' + _lsFlag);
-    print('_lsLocation-->' + _lsLocation);
-    print('_lsPernm-->' + _lsPernm);
-    print('_lsSeq-->' + _lsSeq);
-
-    final response = await http.post(
-      uri,
-      headers: <String, String> {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Accept' : 'application/json'
-      },
-      body: <String, String> {
-        'custcd': _custcd,
-        'inputdate': _lsInputdate,
-        'subject': _lsSubject,
-        'itemmemo': _lsItemMemo,
-        'flag': _lsFlag,
-        'pernm': _lsPernm,
-        'location': _lsLocation,
-        'seq': _lsSeq
-      },
-    );
-    if(response.statusCode == 200){
-      try{
-        // var result =  jsonDecode(utf8.decode(response.bodyBytes))  ;
-        var result =  utf8.decode(response.bodyBytes);
-        print('result-->' + result);
-        if (result == "SUCCESS"){
-          _lsUpdate = true;
-          return true;
-          //Navigator.push(context, MaterialPageRoute(builder: (context) => AppPage01()));
-        }else{
-          _lsUpdate = false;
-          return false;
-        }
-      }catch(e){
-        // print(e.toString());
-        showAlertDialog(context, e.toString() + " : 관리자에게 문의하세요");
-      }
-    }else{
-      //만약 응답이 ok가 아니면 에러를 던집니다.
-      throw Exception('업데이트중 오류가났습니다.');
-    }
+     return true;
   }
 
-
+  //---------cording ---------
   Future delete_data() async{
-    if(!_lsModify) {
-      showAlertDialog(context, '등록자만 삭제할 수 있습니다.');
-      return false;
-    }
-    var uritxt = CLOUD_URL + '/daegun/itemdelete';
-    var encoded = Uri.encodeFull(uritxt);
-    Uri uri = Uri.parse(encoded);
-    _lsSeq = _llSeq.toString();
 
-    final response = await http.post(
-      uri,
-      headers: <String, String> {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Accept' : 'application/json'
-      },
-      body: <String, String> {
-        'seq': _lsSeq
-      },
-    );
-    if(response.statusCode == 200){
-      try{
-        // var result =  jsonDecode(utf8.decode(response.bodyBytes))  ;
-        var result =  utf8.decode(response.bodyBytes);
-        print('result-->' + result);
-        if (result == "SUCCESS"){
-          _lsDelete = true;
-          return true;
-          //Navigator.push(context, MaterialPageRoute(builder: (context) => AppPage01()));
-        }else{
-          _lsDelete = false;
-          return false;
-        }
-      }catch(e){
-        // print(e.toString());
-        showAlertDialog(context, e.toString() + " : 관리자에게 문의하세요");
-      }
-    }else{
-      //만약 응답이 ok가 아니면 에러를 던집니다.
-      throw Exception('삭제중 오류가났습니다.');
-    }
+     return true;
   }
 
 
@@ -242,260 +78,8 @@ class _AppPage02DeatilState extends State<AppPage02Deatil> {
         backgroundColor: GlobalStyle.appBarBackgroundColor,
         systemOverlayStyle: GlobalStyle.appBarSystemOverlayStyle,
       ),
-      body: ListView(
-        padding: EdgeInsets.all(16),
-        children: [
-          Card(
-            color: SOFT_BLUE,
-            elevation: 5,
-            child: Container(
-              padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
 
-                  icon: Icon(Icons.keyboard_arrow_down),
-                  dropdownColor: SOFT_BLUE,
-                  iconEnabledColor: Colors.white,
-                  /*hint: Text("합격",  style: TextStyle(color: Colors.white)),*/
-                  items: dropdownList.map((item) {
-                    return DropdownMenuItem<String>(
-                      child: Text(item, style: TextStyle(color: Colors.white)),
-                      value: item,
-                    );
-                  }).toList(),
-                  onChanged: (String? value) =>
-                      setState(() {
-                        if(value.toString() == "분실"){
-                          _selectedValue = "001";
-                        }
-
-                        if(value.toString() == "습득"){
-                          _selectedValue = "002";
-                        }
-                        this._selectedValue2 = value;
-                        print(_selectedValue);
-                      }),
-                  value: _selectedValue2,
-
-                ),
-              ),
-            ),
-
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          TextField(
-            controller: _etInputdate,
-            readOnly: true,
-            onTap: () {
-              _selectDateWithMinMaxDate(context);
-            },
-            maxLines: 1,
-            enabled: _lsModify,
-            cursorColor: Colors.grey[600],
-            style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-            decoration: InputDecoration(
-                isDense: true,
-                suffixIcon: Icon(Icons.date_range, color: Colors.pinkAccent),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey[600]!),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey[600]!),
-                ),
-                labelText: '작성일자 ',
-                labelStyle:
-                TextStyle(color: BLACK_GREY)),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Form(
-            child: TextFormField(
-              controller: _etPernm,
-              autofocus: true,
-              enabled: _lsModify,
-              decoration: InputDecoration(
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  focusedBorder: UnderlineInputBorder(
-                      borderSide:
-                      BorderSide(color: PRIMARY_COLOR, width: 2.0)),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFFCCCCCC)),
-                  ),
-                  labelStyle:
-                  TextStyle(fontSize: 23,  fontWeight: FontWeight.bold, color: BLACK_GREY)),
-
-            ),
-          ),
-
-          SizedBox(
-            height: 20,
-          ),
-          Form(
-            key: _formKey,
-            child: TextFormField(
-              controller: _etSubject,
-              enabled: _lsModify,
-              validator: (value){
-                if(value != null  && value.isEmpty){
-                  return '제목을 입력하세요';
-                }
-                return null;
-              },
-              autofocus: true,
-              decoration: InputDecoration(
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  hintText: '제목을 작성하세요',
-                  focusedBorder: UnderlineInputBorder(
-                      borderSide:
-                      BorderSide(color: PRIMARY_COLOR, width: 2.0)),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFFCCCCCC)),
-                  ),
-                  labelText: '제목 *',
-                  labelStyle:
-                  TextStyle(fontSize: 23,  fontWeight: FontWeight.bold, color: BLACK_GREY)),
-
-            ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Form(
-            child: TextFormField(
-              autofocus: true,
-              controller: _etLocation,
-              enabled: _lsModify,
-              validator: (value){
-                if(value != null  && value.isEmpty){
-                  return '위치를 입력하세요';
-                }
-                return null;
-              },
-              decoration: InputDecoration(
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  hintText: '위치를 입력하세요',
-                  focusedBorder: UnderlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                      borderSide:
-                      BorderSide(color: PRIMARY_COLOR, width: 2.0)),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFFCCCCCC)),
-                  ),
-                  labelText: '위치 *',
-                  labelStyle:
-                  TextStyle(fontSize: 23,  fontWeight: FontWeight.bold, color: BLACK_GREY)),
-            ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Form(
-            key: _formKey2,
-            child: TextFormField(
-              autofocus: true,
-              controller: _etItemmemo,
-              enabled: _lsModify,
-              validator: (value){
-                if(value != null  && value.isEmpty){
-                  return '내용을 입력하세요';
-
-                }
-                return null;
-              },
-              decoration: InputDecoration(
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  hintText: '내용을 작성하세요',
-                  focusedBorder: UnderlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                      borderSide:
-                      BorderSide(color: PRIMARY_COLOR, width: 2.0)),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFFCCCCCC)),
-                  ),
-                  labelText: '내용 *',
-                  labelStyle:
-                  TextStyle(fontSize: 23,  fontWeight: FontWeight.bold, color: BLACK_GREY)),
-            ),
-          ),
-          SizedBox(
-            height: 12,
-          )
-          ,Row(
-            children: [
-              Container(
-                width: 0.38 * MediaQuery
-                    .of(context)
-                    .size
-                    .width,
-                child: ElevatedButton(onPressed: () {
-                  /*Navigator.pop(context);*/
-                  showDialog(context: context, builder: (context) {
-                    return AlertDialog(
-                      content: Text('수정하시겠습니까?'),
-                      actions: <Widget>[
-                        TextButton(
-                          child: Text('OK'),
-                          onPressed: () async {
-                            var result = await update_data();
-                            if (result){
-                              Get.off(() => AppPage02());
-                              //Navigator.push(context, MaterialPageRoute(builder: (context) => AppPage02()));
-                              //Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AppPage02()));
-                            }else{
-                              Fluttertoast.showToast(msg: "등록오류");
-                            }
-                          },
-                        ),
-                        TextButton(onPressed: () {
-                          Navigator.pop(context, "취소");
-                        }, child: Text('Cancel')),
-                      ],
-                    );
-                  });
-                }, child: Text('수정하기')),
-              ),
-              Container(
-                width: 0.38 * MediaQuery.of(context).size.width,
-                margin: EdgeInsets.only(left: 20),
-                child: ElevatedButton(onPressed: (){
-                  /*Navigator.pop(context);*/
-                  showDialog(context: context, builder: (context){
-                    return AlertDialog(
-                      content: Text('삭제하시겠습니까?'),
-                      actions: <Widget>[
-                        TextButton(
-                          child: Text('OK'),
-                          onPressed: () async {
-                            var result = await delete_data();
-                            if (result){
-                              Get.off(() => AppPage02());
-                              //Navigator.push(context, MaterialPageRoute(builder: (context) => AppPage02()));
-                              //Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AppPage02()));
-                            }else{
-                              Fluttertoast.showToast(msg: "등록오류");
-                            }
-                          },
-                        ),
-                        TextButton(onPressed: (){
-                          Navigator.pop(context, "취소");
-                        }, child: Text('Cancel')),
-                      ],
-                    );
-                  });
-                }, child: Text('삭제하기'),
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.redAccent,
-                    //onPrimary: Colors.black,
-                  ),),
-              ),
-            ],
-          )
-
-        ],
-      ),
+     //---------cording --------- body listview
 
     );
   }
@@ -523,9 +107,6 @@ class _AppPage02DeatilState extends State<AppPage02Deatil> {
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
-
-        _etInputdate = TextEditingController(
-            text: _selectedDate.toLocal().toString().split(' ')[0]);
       });
     }
   }

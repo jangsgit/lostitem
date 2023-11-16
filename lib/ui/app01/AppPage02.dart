@@ -112,63 +112,11 @@ class _AppPage02State extends State<AppPage02> {
     super.dispose();
   }
 
+  //---------cording ---------
   Future itemlist_getdata() async {
-    String _custcd = await SessionManager().get("custcd");
-    String ls_search = "";
-    ls_search =  _etSearch2.text;
 
-    if(ls_search == null || ls_search.length == 0){
-      ls_search = "%";
-    }
-    var uritxt = CLOUD_URL + '/daegun/itemlist';
-    var encoded = Uri.encodeFull(uritxt);
-    Uri uri = Uri.parse(encoded);
-    // try {
-    final response = await http.post(
-      uri,
-      headers: <String, String>{
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Accept': 'application/json'
-      },
-      body: <String, String>{
-        'custcd': _custcd,
-        'searchtxt': ls_search,
-      },
-    );
-    if (response.statusCode == 200) {
-      List<dynamic> alllist = [];
-      alllist = jsonDecode(utf8.decode(response.bodyBytes));
-      itemData.clear();
-      //print(alllist);
-
-      for (int i = 0; i < alllist.length; i++) {
-        itemlist_model Object = itemlist_model(
-          seq: alllist[i]['seq'],
-          custcd: alllist[i]['custcd'],
-          flag: alllist[i]['flag'],
-          inputdate: alllist[i]['inputdate'],
-          itemsubject: alllist[i]['itemsubject'],
-          pernm: alllist[i]['pernm'],
-          itemmemo: alllist[i]['itemmemo'],
-          location: alllist[i]['location'],
-          flagnm: alllist[i]['flagnm']
-        );
-        setState(() {
-          itemData.add(Object);
-        });
-      }
       return ;
 
-    } else {
-      // Fluttertoast.showToast(msg: e.toString());
-      throw Exception('불러오는데 실패했습니다');
-
-    }
-    // } catch (e) {
-    //   //만약 응답이 ok가 아니면 에러를 던집니다.
-    //   Fluttertoast.showToast(msg: '에러입니다.');
-    //   return <MhmanualList_model>[];
-    // }
   }
 
 
@@ -192,23 +140,16 @@ class _AppPage02State extends State<AppPage02> {
               Padding(
                 padding: const EdgeInsets.only(right: 10),
                 child: TextButton(onPressed: (){
-
                   setState(() {
-
                     itemlist_getdata();
-
                   });
-                  /*searchBook(_etSearch.text);*/
-                  /*searchBook2(_etSearch2.text);*/
                 }, child: Text('검색하기')),
               ),
-
             ],
           )
         ],
         backgroundColor: GlobalStyle.appBarBackgroundColor,
         systemOverlayStyle: GlobalStyle.appBarSystemOverlayStyle,
-        // bottom: _reusableWidget.bottomAppBar(),
       ),
       body: ListView(
         padding: EdgeInsets.all(16),
@@ -242,9 +183,6 @@ class _AppPage02State extends State<AppPage02> {
               ),
             ),
           ),
-          /*Text('점검조치사항 자료실', style: TextStyle(
-              fontSize: 16, fontWeight: FontWeight.w500, color: CHARCOAL
-          )),*/
           Container(
             padding:EdgeInsets.only(top:16, bottom: 2, left: 10),
             child: Text('분실습득건수 ${itemData.length} 건',
